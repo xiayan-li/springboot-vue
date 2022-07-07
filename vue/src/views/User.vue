@@ -84,7 +84,7 @@
 // // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 
-import { method } from 'lodash'
+
 import request from "../utils/request";
 
 
@@ -192,6 +192,6 @@ export default {
     }
   }
 }
-
+//test
 
 </script>
