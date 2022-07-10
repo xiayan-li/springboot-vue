@@ -107,7 +107,6 @@ export default {
   components: { Editor, Toolbar},
   data() {
     return {
-      author: "",
       form:{},
       dialogVisible: false,
       search: '',
@@ -122,9 +121,7 @@ export default {
   },
   created(){
     this.load()
-    let str = sessionStorage.getItem("user") || "{}"
-    this.user = JSON.parse(str)
-    this.author = this.user.username
+
   },
   methods: {
     load() {
@@ -194,6 +191,9 @@ export default {
           this.dialogVisible = false
         })
       } else {
+        let str = sessionStorage.getItem("user") || "{}"
+        let user = JSON.parse(str)
+        this.form.author = user.nickName //让表单的author绑定到后台user信息
         request.post("/news", this.form).then(res => {
           console.log(res)
           if(res.code==='0'){
