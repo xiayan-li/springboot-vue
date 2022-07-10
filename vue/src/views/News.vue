@@ -5,30 +5,21 @@
     <div>
       <!--      @click="add"-->
       <el-button type="primary" @click="add">新增</el-button>
-      <el-button type="primary" round>导入</el-button>
-      <el-button type="primary" round>导出</el-button>
     </div>
     <!-- 搜索区域 -->
     <div style="margin: 10px 0">
-      <el-input v-model="search" placeholder="请输入关键字" style="width: 200px"  clearable></el-input>
+      <el-input v-model="search" placeholder="请输入关键字" style="width: 20%"  clearable></el-input>
       <el-button type="primary" style="margin-left: 5px" @click="load" >查询</el-button>
     </div>
     <el-table :data="tableData" stripe border style="width: 100%">
       <el-table-column prop="id" label="ID" sortable  />
-      <el-table-column prop="bookName" label="书名"  />
-      <el-table-column prop="price" label="价格" />
+      <el-table-column prop="title" label="标题"  />
       <el-table-column prop="author" label="作者" />
-      <el-table-column prop="time" label="出版时间" />
-      <el-table-column label="封面" >
+      <el-table-column prop="time" label="发布时间" />
+
+      <el-table-column fixed="right" label="Operations" width="200">
         <template #default="scope">
-          <el-image style="width: 100px; height: 100px"
-                    :src="scope.row.cover"
-                    :preview-src-list="[scope.row.cover]"
-                    :fit="fit" />
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="Operations" width="120">
-        <template #default="scope">
+          <el-button size="mini" @click="details(scope.row)">详情</el-button>
           <el-button link type="primary" size="small" @click="handleEdit(scope.row)"
           >编辑</el-button>
           <el-popconfirm title="确认删除吗？" @confirm="handleDelete(scope.row.id)">
@@ -53,29 +44,27 @@
         @current-change="handleCurrentChange"
     />
 
-    <el-dialog v-model="dialogVisible" title="Tips" width="30%">
+    <el-dialog v-model="dialogVisible" title="Tips" width="40%">
       <el-form :model="form" label-width="120px" >
-        <el-form-item label="书名" >
-          <el-input v-model="form.bookName" style="width: 80%" />
+        <el-form-item label="标题" >
+          <el-input v-model="form.title" style="width: 50%" />
         </el-form-item>
-        <el-form-item label="价格" >
-          <el-input v-model="form.price" style="width: 80%" />
-        </el-form-item>
-        <el-form-item label="作者" >
-          <el-input v-model="form.author" style="width: 80%" />
-        </el-form-item>
-        <el-form-item label="出版时间" >
-          <el-date-picker v-model="form.time" type="date" value-format="YYYY-MM-DD" placeholder="Pick a Date" style="width: 80%" clearable/>
-        </el-form-item>
-        <el-form-item label="封面">
-          <el-upload
-              ref="upload"
-              action="/api/files/upload"
-              :on-success="fileUploadSuccess"
-          >
-            <el-button type="primary">点击上传</el-button>
-          </el-upload>
-        </el-form-item>
+<!--        <div id="div1"></div>-->
+        <div style="border: 1px solid #ccc">
+          <Toolbar
+              style="border-bottom: 1px solid #ccc"
+              :editor="editorRef"
+              :defaultConfig="toolbarConfig"
+              :mode="mode"
+          />
+          <Editor
+              style="height: 300px; overflow-y: hidden;"
+              v-model="valueHtml"
+              :defaultConfig="editorConfig"
+              :mode="mode"
+              @onCreated="handleCreated"
+          />
+        </div>
 
       </el-form>
 
@@ -89,6 +78,12 @@
       </template>
     </el-dialog>
 
+    <el-dialog title="详情" v-model="vis" width="50%">
+      <el-card>
+        <div v-html="detail.content" style="min-height: 100px"></div>
+      </el-card>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -96,31 +91,44 @@
 // // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 
-import { method } from 'lodash'
+
 import request from "../utils/request";
+import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+// import { IEditorConfig} from '@wangeditor/editor'
+
 
 
 
 
 export default {
-  name: "book",
+  name: "news",
+  components: { Editor, Toolbar},
   data() {
     return {
+      author: "",
       form:{},
       dialogVisible: false,
       search: '',
       currentPage: 1,
       total: 10,
       pageSize: 10,
-      tableData: []
+      tableData: [],
+      vis: false,
+      detail: {} ,//这些返回的可以是属性p也可以是域f(只有在method里才可为f)
+      user: {},
     }
   },
   created(){
     this.load()
+    let str = sessionStorage.getItem("user") || "{}"
+    this.user = JSON.parse(str)
+    this.author = this.user.username
   },
   methods: {
     load() {
-      request.get("/book", {
+      request.get("/news", {
         params: {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
@@ -136,15 +144,10 @@ export default {
     handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
-      this.$nextTick(() =>{
-        if (this.$refs['upload']) {
-          this.$refs['upload'].clearFiles()  // 清除历史文件列表
-        }
-      })
     },
     handleDelete(id){
       console.log(id)
-      request.delete("book/" + id).then(res =>{
+      request.delete("news/" + id).then(res =>{
         if(res.code==='0'){
           this.$message(
               {
@@ -170,13 +173,12 @@ export default {
     add() {
       this.dialogVisible = true
       this.form = {}
-      if (this.$refs['upload']) {
-        this.$refs['upload'].clearFiles()
-      } //清除历史文件列表
+
     },
     save() {
+      this.form.content = this.valueHtml
       if (this.form.id) {
-        request.put("/book", this.form).then(res => {
+        request.put("/news", this.form).then(res => {
           console.log(res)
           if(res.code==='0'){
             this.$message(
@@ -192,7 +194,7 @@ export default {
           this.dialogVisible = false
         })
       } else {
-        request.post("/book", this.form).then(res => {
+        request.post("/news", this.form).then(res => {
           console.log(res)
           if(res.code==='0'){
             this.$message(
@@ -209,11 +211,58 @@ export default {
         })
       }
     },
-    fileUploadSuccess(res){
-      console.log(res)
-      this.form.cover = res.data
+    details(row) {
+      this.detail = row
+      this.vis = true
+
+    },
+  },
+  setup() {
+    // 编辑器实例，必须用 shallowRef
+    const editorRef = shallowRef()
+
+    // 内容 HTML
+    const valueHtml = ref('<p>hello</p>')
+
+    // 模拟 ajax 异步获取内容
+    onMounted(() => {
+      setTimeout(() => {
+        valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
+      }, 1500)
+    })
+
+    const toolbarConfig = {}
+
+    const editorConfig = {MENU_CONF: {}}
+    editorConfig.MENU_CONF['uploadImage'] = {
+      server: '/api/files/editor/upload',
+      fieldName: 'file'
     }
-  }
+
+
+    // 组件销毁时，也及时销毁编辑器
+    onBeforeUnmount(() => {
+      const editor = editorRef.value
+      if (editor == null) return
+      editor.destroy()
+    })
+
+    const handleCreated = (editor) => {
+      editorRef.value = editor // 记录 editor 实例，重要！
+      console.log('created', editor)
+    }
+
+    return {
+      editorRef,
+      valueHtml,
+      mode: 'default', // 或 'simple'
+      toolbarConfig,
+      editorConfig,
+      handleCreated //这些返回的只可以是属性p
+    };
+  },
+
+
 }
 
 

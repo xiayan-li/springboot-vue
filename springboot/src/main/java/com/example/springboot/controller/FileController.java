@@ -70,5 +70,24 @@ public class FileController {
             System.out.println("文件下载失败");
         }
     }
+
+    @PostMapping("/editor/upload")
+    public JSON editorUpload(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();  // 获取源文件的名称
+        // 定义文件的唯一标识（前缀）
+        String flag = IdUtil.fastSimpleUUID();
+        String rootFilePath = System.getProperty("user.dir") + "/springboot/src/main/resources/files/" + flag + "_" + originalFilename;  // 获取上传的路径
+        FileUtil.writeBytes(file.getBytes(), rootFilePath);  // 把文件写入到上传的路径
+        String url = ip + ":" + port + "/files/" + flag;
+        JSONObject json = new JSONObject();
+        json.set("errno", 0);
+        JSONArray arr = new JSONArray();
+        JSONObject data = new JSONObject();
+        arr.add(data);
+        data.set("url", url);
+        json.set("data", arr);
+        System.out.println(json);
+        return json;  //
+    }
 }
 
