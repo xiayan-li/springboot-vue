@@ -11,6 +11,14 @@
         <el-form-item prop="password">
           <el-input v-model="form.password" :prefix-icon="Lock" />
         </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.validCode" style="width: 50%; padding-right: 5px" :prefix-icon="Key"></el-input>
+          <ValidCode @input="createValidCode"></ValidCode>
+        </el-form-item>
+        <el-form-item>
+          <el-radio v-model="form.role" :label="1">管理员</el-radio>
+          <el-radio v-model="form.role" :label="2">普通用户</el-radio>
+        </el-form-item>
         <el-button style="width: 100%;"  type="primary" @click="login()">
           登录</el-button>
       </el-form>
@@ -21,29 +29,46 @@
 </template>
 
 <script>
-import  { Lock, Avatar} from '@element-plus/icons-vue'
+import  { Lock, Avatar, Key} from '@element-plus/icons-vue'
 import request from "../utils/request";
+import ValidCode from "@/components/ValidCode"
 export default {
   name: "login",
+  components:{ValidCode},
   data(){
     return  {
       form:{},
       rules:{
         username:[{required: true, message: '请输入用户名', trigger: 'blur' }],
         password:[{required: true, message: '请输入密码', trigger: 'blur' }],
+        validCode:[{required: true, message: '请输入验证码', trigger: 'blur' }],
       },
+      validCode:'',
     }
+    // sessionStorage.removeItem("user")
   },
   setup(){
     return {
       Lock,
       Avatar,
+      Key
     }
   },
   methods: {
+    createValidCode(data){
+      this.validCode = data
+    },
     login() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
+          if(!this.form.validCode){
+            this.$message.error("请填写验证码")
+            return
+          }
+          if(this.form.validCode.toLowerCase() !== this.validCode.toLowerCase()){
+            this.$message.error("验证码错误")
+            return
+          }
           console.log('submit!')
           request.post("/user/login", this.form).then(res => {
             console.log(res)
@@ -73,5 +98,13 @@ export default {
 </script>
 
 <style scoped>
-
+.ValidCode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.ValidCode span{
+  display: inline-block;
+}
 </style>

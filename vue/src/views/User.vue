@@ -13,13 +13,20 @@
       <el-input v-model="search" placeholder="请输入关键字" style="width: 200px"  clearable></el-input>
       <el-button type="primary" style="margin-left: 5px" @click="load" >查询</el-button>
     </div>
-    <el-table :data="tableData" stripe border style="width: 100%">
+    <el-table :data="tableData" stripe border style="width: 100%"  v-loading="loading">
     <el-table-column prop="id" label="ID" sortable  />
     <el-table-column prop="username" label="用户名"  />
     <el-table-column prop="nickName" label="昵称" />
     <el-table-column prop="sex" label="性别" />
     <el-table-column prop="age" label="年龄" />
     <el-table-column prop="address" label="地址" />
+    <el-table-column
+        label="角色">
+      <template #default="scope">
+        <span v-if="scope.row.role === 1">管理员</span>
+        <span v-if="scope.row.role === 2">普通用户</span>
+      </template>
+    </el-table-column>
     <el-table-column fixed="right" label="Operations" width="120">
       <template #default="scope">
         <el-button link type="primary" size="small" @click="handleEdit(scope.row)"
@@ -100,7 +107,8 @@ export default {
       currentPage: 1,
       total: 10,
       pageSize: 10,
-      tableData: []
+      tableData: [],
+      loading: true,
    }
   },
   created(){
@@ -108,6 +116,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true
       request.get("/user", {
         params: {
           pageNum: this.currentPage,
@@ -116,6 +125,7 @@ export default {
         }
       }).then(res => {
         console.log(res)
+        this.loading = false
         this.tableData = res.data.records
         this.total = res.data.total
       })

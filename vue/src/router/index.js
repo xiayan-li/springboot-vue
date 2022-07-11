@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/User.vue'
 import Layout from '../layout/Layout.vue'
-
+// import Vue from 'vue'
+// import Router from'vue-router'
+//  Vue.use(Router)
 
 const routes = [
   {
@@ -9,7 +11,7 @@ const routes = [
     path: '/',
     name: 'Layout',
     component: Layout,
-    redirect: '/user',
+    redirect: '/book',
     children:[
         { //进行二次路由
           path: 'user',

@@ -5,9 +5,10 @@
     <!-- 主体 -->
     <div style="display: flex">
       <!-- 侧边栏 -->
+<!--      最好标签的开启和关闭写完整，不然会出现无法渲染的警告-->
       <Aside />
       <!-- 内容 -->
-      <router-view style="flex: 1"/>
+      <router-view style="flex: 1"></router-view>
 
     </div>
   </div>

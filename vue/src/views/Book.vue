@@ -4,7 +4,7 @@
     <!-- 新增区域 -->
     <div>
       <!--      @click="add"-->
-      <el-button type="primary" @click="add">新增</el-button>
+      <el-button type="primary" @click="add" v-if="user.role === 1">新增</el-button>
       <el-button type="primary" round>导入</el-button>
       <el-button type="primary" round>导出</el-button>
     </div>
@@ -13,7 +13,7 @@
       <el-input v-model="search" placeholder="请输入关键字" style="width: 200px"  clearable></el-input>
       <el-button type="primary" style="margin-left: 5px" @click="load" >查询</el-button>
     </div>
-    <el-table :data="tableData" stripe border style="width: 100%">
+    <el-table :data="tableData" stripe border style="width: 100%"  v-loading="loading">
       <el-table-column prop="id" label="ID" sortable  />
       <el-table-column prop="bookName" label="书名"  />
       <el-table-column prop="price" label="价格" />
@@ -29,9 +29,8 @@
       </el-table-column>
       <el-table-column fixed="right" label="Operations" width="120">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click="handleEdit(scope.row)"
-          >编辑</el-button>
-          <el-popconfirm title="确认删除吗？" @confirm="handleDelete(scope.row.id)">
+          <el-button link type="primary" size="small" @click="handleEdit(scope.row)" v-if="user.role === 1">编辑</el-button>
+          <el-popconfirm title="确认删除吗？" @confirm="handleDelete(scope.row.id)" v-if="user.role === 1">
             <template #reference>
               <el-button type="text" size="small" >删除</el-button>
             </template>
@@ -112,14 +111,25 @@ export default {
       currentPage: 1,
       total: 10,
       pageSize: 10,
-      tableData: []
+      tableData: [],
+      user: {},
+      loading: true, //会有加载小圈圈
     }
   },
   created(){
-    this.load()
+    let userStr = sessionStorage.getItem("user") || "{}"
+    this.user = JSON.parse(userStr)
+    // 请求服务端，确认当前登录用户的 合法信息
+    request.get("/user/" + this.user.id).then(res => {
+      if (res.code === '0') {
+        this.user = res.data
+      }
+    })
+    this.load() //刚进来book/时进行页面加载
   },
   methods: {
     load() {
+      this.loading = true
       request.get("/book", {
         params: {
           pageNum: this.currentPage,
@@ -128,6 +138,7 @@ export default {
         }
       }).then(res => {
         console.log(res)
+        this.loading = false
         this.tableData = res.data.records
         this.total = res.data.total
       })

@@ -107,5 +107,6 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.21" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.7.1" level="project" />
     <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.8.4" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.3" level="project" />
   </component>
 </module>

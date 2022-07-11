@@ -1,40 +1,26 @@
 <template>
+  <!-- 要在App.vue要加el-config-provider，不然会出现组件无法渲染的警告-->
+  <el-config-provider :locale="locale">
     <router-view />
+  </el-config-provider>
+
 </template>
-
-<style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-} */
-</style>
 
 
 <script>
-import Header from "@/components/Header";
-import Aside from "@/components/Aside"
+import { ElConfigProvider } from 'element-plus'
+
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 
 export default {
-    name: "App",
-    components:{
-      Header, 
-      Aside,
+  name: "App",
+  components: {
+    [ElConfigProvider.name]: ElConfigProvider,
+  },
+  data() {
+    return {
+      locale: zhCn,
     }
-  }
+  },
+}
 </script>

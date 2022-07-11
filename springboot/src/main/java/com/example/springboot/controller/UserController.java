@@ -67,11 +67,6 @@ public class UserController {
         return Result.success(res);
     }
 
-//    @GetMapping("/{id}")
-//    public Result<?> getById(@PathVariable Long id) {
-//        return Result.success(userMapper.selectById(id));
-//    }
-
     //    从前端post过来，注册
     @PostMapping("/register")
     public  Result<?> register (@RequestBody User user){
@@ -85,6 +80,9 @@ public class UserController {
     userMapper.insert(user);
     return Result.success();
 }
-
+    @GetMapping("/{id}")
+    public Result<?> getById(@PathVariable Long id) {
+        return Result.success(userMapper.selectById(id));
+    }
 
 }
