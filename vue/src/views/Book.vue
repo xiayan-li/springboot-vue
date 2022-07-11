@@ -2,16 +2,28 @@
 
   <div style="padding: 10px">
     <!-- 新增区域 -->
-    <div>
+    <div style="margin: 10px 0" >
       <!--      @click="add"-->
       <el-button type="primary" @click="add" v-if="user.role === 1">新增</el-button>
+      <el-popconfirm
+          title="确定删除吗？"
+          @confirm="deleteBatch"
+      >
+        <template #reference>
+          <el-button type="danger" v-if="user.role === 1">批量删除</el-button>
+        </template>
+      </el-popconfirm>
     </div>
     <!-- 搜索区域 -->
     <div style="margin: 10px 0">
       <el-input v-model="search" placeholder="请输入关键字" style="width: 200px"  clearable></el-input>
       <el-button type="primary" style="margin-left: 5px" @click="load" >查询</el-button>
     </div>
-    <el-table :data="tableData" stripe border style="width: 100%"  v-loading="loading">
+    <el-table :data="tableData" stripe border style="width: 100%"  v-loading="loading" @selection-change="handleSelectionChange">
+      <el-table-column
+          type="selection"
+          width="55">
+      </el-table-column>
       <el-table-column prop="id" label="ID" sortable  />
       <el-table-column prop="name" label="书名"  />
       <el-table-column prop="price" label="价格" />
@@ -112,6 +124,7 @@ export default {
       tableData: [],
       user: {},
       loading: true, //会有加载小圈圈
+      ids:[]
     }
   },
   created(){
@@ -221,7 +234,24 @@ export default {
     fileUploadSuccess(res){
       console.log(res)
       this.form.cover = res.data
-    }
+    },
+    deleteBatch() {
+      if (!this.ids.length) {
+        this.$message.warning("请选择数据！")
+        return
+      }
+      request.post("/book/deleteBatch", this.ids).then(res => {
+        if (res.code === '0') {
+          this.$message.success("批量删除成功")
+          this.load()
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    handleSelectionChange(val) {
+      this.ids = val.map(v => v.id)
+    },
   }
 }
 

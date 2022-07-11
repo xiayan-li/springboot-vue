@@ -10,6 +10,7 @@ import com.example.springboot.mapper.BookMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/book")
@@ -17,13 +18,13 @@ import javax.annotation.Resource;
 //负责前后台交互
 public class BookController {
     @Resource
-    BookMapper BookMapper;
+    BookMapper bookMapper;
 
     //    从前端post过来， 增
     @PostMapping
     public  Result<?> save (@RequestBody Book Book){
 
-        BookMapper.insert(Book);
+        bookMapper.insert(Book);
         return Result.success();
     }
 
@@ -36,7 +37,7 @@ public class BookController {
         if(StrUtil.isNotBlank(search)){
             wrapper.like(Book::getName, search);
         }
-        Page<Book> BookPage = BookMapper.selectPage(new Page<>(pageNum, pageSize),wrapper);
+        Page<Book> BookPage = bookMapper.selectPage(new Page<>(pageNum, pageSize),wrapper);
         return Result.success(BookPage);
     }
 
@@ -44,7 +45,7 @@ public class BookController {
     @PutMapping
     public  Result<?> update (@RequestBody Book Book){
 
-        BookMapper.updateById(Book);
+        bookMapper.updateById(Book);
         return Result.success();
     }
 
@@ -52,10 +53,15 @@ public class BookController {
     @DeleteMapping("/{id}")
     public  Result<?> delete (@PathVariable long id){
 
-        BookMapper.deleteById(id);
+        bookMapper.deleteById(id);
         return Result.success();
     }
 
+    @PostMapping("/deleteBatch")
+    public Result<?> deleteBatch(@RequestBody List<Integer> ids) {
+        bookMapper.deleteBatchIds(ids);
+        return Result.success();
+    }
 
 
 
