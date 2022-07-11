@@ -56,6 +56,7 @@ public class CategoryController {
      * @param allCategories
      * @return
      */
+    //递归实现
     private List<Category> loopQuery(Integer pid, List<Category> allCategories) {
         List<Category> categoryList = new ArrayList<>();
         for (Category category : allCategories) {
