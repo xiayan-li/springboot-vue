@@ -34,7 +34,7 @@ public class BookController {
                             @RequestParam(defaultValue = "") String search){
         LambdaQueryWrapper<Book> wrapper = Wrappers.<Book>lambdaQuery();
         if(StrUtil.isNotBlank(search)){
-            wrapper.like(Book::getBookName, search);
+            wrapper.like(Book::getName, search);
         }
         Page<Book> BookPage = BookMapper.selectPage(new Page<>(pageNum, pageSize),wrapper);
         return Result.success(BookPage);

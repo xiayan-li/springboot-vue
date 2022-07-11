@@ -5,8 +5,6 @@
     <div>
       <!--      @click="add"-->
       <el-button type="primary" @click="add" v-if="user.role === 1">新增</el-button>
-      <el-button type="primary" round>导入</el-button>
-      <el-button type="primary" round>导出</el-button>
     </div>
     <!-- 搜索区域 -->
     <div style="margin: 10px 0">
@@ -15,7 +13,7 @@
     </div>
     <el-table :data="tableData" stripe border style="width: 100%"  v-loading="loading">
       <el-table-column prop="id" label="ID" sortable  />
-      <el-table-column prop="bookName" label="书名"  />
+      <el-table-column prop="name" label="书名"  />
       <el-table-column prop="price" label="价格" />
       <el-table-column prop="author" label="作者" />
       <el-table-column prop="time" label="出版时间" />
@@ -55,7 +53,7 @@
     <el-dialog v-model="dialogVisible" title="Tips" width="30%">
       <el-form :model="form" label-width="120px" >
         <el-form-item label="书名" >
-          <el-input v-model="form.bookName" style="width: 80%" />
+          <el-input v-model="form.name" style="width: 80%" />
         </el-form-item>
         <el-form-item label="价格" >
           <el-input v-model="form.price" style="width: 80%" />

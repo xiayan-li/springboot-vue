@@ -11,7 +11,7 @@ const routes = [
     path: '/',
     name: 'Layout',
     component: Layout,
-    redirect: '/book',
+    redirect: '/user',
     children:[
         { //进行二次路由
           path: 'user',

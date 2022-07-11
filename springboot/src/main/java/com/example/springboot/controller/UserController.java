@@ -70,19 +70,20 @@ public class UserController {
     //    从前端post过来，注册
     @PostMapping("/register")
     public  Result<?> register (@RequestBody User user){
-    User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()));
-    if (res != null){
-        return Result.error("-1","用户名重复");
+        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()));
+        if (res != null){
+            return Result.error("-1","用户名重复");
+        }
+        if (user.getPassword() == null){
+            user.setPassword("420420");
+        }
+        userMapper.insert(user);
+        return Result.success();
     }
-    if (user.getPassword() == null){
-        user.setPassword("420420");
-    }
-    userMapper.insert(user);
-    return Result.success();
-}
     @GetMapping("/{id}")
     public Result<?> getById(@PathVariable Long id) {
         return Result.success(userMapper.selectById(id));
     }
 
 }
+
