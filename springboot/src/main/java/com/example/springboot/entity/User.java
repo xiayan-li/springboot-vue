@@ -19,5 +19,5 @@ public class User {
     private String address;
 
     private Integer role;
-
+    private String avatar;
 }

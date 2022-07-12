@@ -6,7 +6,8 @@
             <el-dropdown>
                 <span class="el-dropdown-link">
                   <div>
-                    <br />{{ user.nickName }}
+                    <el-avatar :size="30" :src="user.avatar" style="position: relative; top: 10px"></el-avatar>
+                    {{ user.nickName }}
                     <el-icon>
                       <ArrowDown />
                     </el-icon>
