@@ -11,9 +11,15 @@ const routes = [
     path: '/',
     name: 'Layout',
     component: Layout,
-    redirect: '/book',
+    redirect: '/home',
     children:[
-        { //进行二次路由
+      //进行二次路由
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import("@/views/Home"),
+      },
+        {
           path: 'user',
           name: 'user',
           component: () => import("@/views/User")

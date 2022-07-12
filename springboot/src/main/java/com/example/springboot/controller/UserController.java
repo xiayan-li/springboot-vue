@@ -100,5 +100,14 @@ public class UserController extends BaseController {
         return Result.success(userMapper.selectById(id));
     }
 
+    /**
+     * 统计数据
+     * @return
+     */
+    @GetMapping("/count")
+    public Result<?> count() {
+        return Result.success(userMapper.countAddress());
+    }
+
 }
 

@@ -2,17 +2,19 @@
     <div>
         <el-menu style="width: 200px; min-height: calc(100vh - 50px);"
                  router
-                 default-active="$route.path.substr(1)"
+                 default-active="home"
                  class="el-menu-vertical-demo">
+          <!--          <default-active="$route.path.substr(home)"-->
+          <el-menu-item index="home">主页</el-menu-item>
+          <el-menu-item index="book">书籍管理</el-menu-item>
+          <el-menu-item index="category">分类管理</el-menu-item>
+          <el-menu-item index="news">新闻管理</el-menu-item>
           <el-sub-menu index="1" v-if="user.role === 1">
-                <template #title >
-                    <span>系统管理</span>
-                </template>
-                <el-menu-item index="user">用户管理</el-menu-item>
-            </el-sub-menu>
-            <el-menu-item index="book">书籍管理</el-menu-item>
-            <el-menu-item index="category">分类管理</el-menu-item>
-            <el-menu-item index="news">新闻管理</el-menu-item>
+            <template #title >
+              <span>系统管理</span>
+            </template>
+            <el-menu-item index="user">用户管理</el-menu-item>
+          </el-sub-menu>
 
         </el-menu>
     </div>

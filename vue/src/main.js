@@ -8,8 +8,14 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import * as echarts from 'echarts'
 
-createApp(App).use(store).use(router).use(ElementPlus, {size:'small',}).mount('#app')
+const app = createApp(App)
+    .use(store)
+    .use(router)
+    .use(ElementPlus, {size: 'small' })
+    .mount('#app')
+app.echarts = echarts
 // for (const [k, c] of Object.entries(ElementPlusIconsVue)) {
 //     App.component(k, c)
 // }
