@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.springboot.common.BaseController;
 import com.example.springboot.common.Result;
 import com.example.springboot.entity.Book;
 import com.example.springboot.mapper.BookMapper;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("/book")
 
 //负责前后台交互
-public class BookController {
+public class BookController extends BaseController {
     @Resource
     BookMapper bookMapper;
 

@@ -1,5 +1,6 @@
 package com.example.springboot.controller;
 
+import com.example.springboot.common.BaseController;
 import com.example.springboot.common.Result;
 import com.example.springboot.entity.Category;
 import com.example.springboot.mapper.CategoryMapper;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/category")
-public class CategoryController {
+public class CategoryController extends BaseController {
 
     @Resource
     CategoryMapper CategoryMapper;

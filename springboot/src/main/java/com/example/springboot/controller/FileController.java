@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import com.example.springboot.common.BaseController;
 import com.example.springboot.common.Result;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.net.URLEncoder;
 import java.util.List;
 @RestController
 @RequestMapping("/files")
-public class FileController {
+public class FileController extends BaseController {
     @Value("${server.port}")
     private String port;
 

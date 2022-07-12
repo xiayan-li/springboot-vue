@@ -20,4 +20,6 @@ public class User {
 
     private Integer role;
     private String avatar;
+    @TableField(exist = false)
+    private String token;
 }

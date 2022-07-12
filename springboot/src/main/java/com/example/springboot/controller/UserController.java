@@ -3,18 +3,25 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.springboot.common.BaseController;
 import com.example.springboot.common.Result;
 import org.springframework.web.bind.annotation.*;
 import com.example.springboot.entity.User;
 import com.example.springboot.mapper.UserMapper;
 
 import javax.annotation.Resource;
+import cn.hutool.core.date.DateUtil;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.springboot.utils.TokenUtils;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
 
 //负责前后台交互
-public class UserController {
+public class UserController extends BaseController {
     @Resource
     UserMapper userMapper;
 
@@ -60,10 +67,18 @@ public class UserController {
     //    从前端post过来， 登录
     @PostMapping("/login")
     public  Result<?> login (@RequestBody User user) {
-        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword()));
+        //User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword()).eq(User::getRole, user.getRole()));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", user.getUsername());
+        queryWrapper.eq("password", user.getPassword());
+        queryWrapper.eq("role", user.getRole());
+        User res = userMapper.selectOne(queryWrapper);
         if (res == null) {
             return Result.error("-1", "用户名或密码错误");
         }
+        // 生成token
+        String token = TokenUtils.genToken(res);
+        res.setToken(token);
         return Result.success(res);
     }
 

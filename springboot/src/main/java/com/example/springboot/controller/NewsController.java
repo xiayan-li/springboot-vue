@@ -3,6 +3,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.springboot.common.BaseController;
 import com.example.springboot.common.Result;
 import com.example.springboot.entity.News;
 import com.example.springboot.mapper.NewsMapper;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/news")
-public class NewsController {
+public class NewsController extends BaseController {
 
     @Resource
     NewsMapper newsMapper;
